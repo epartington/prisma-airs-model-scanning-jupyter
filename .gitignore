@@ -87,3 +87,14 @@ Thumbs.db
 # *_credentials.sh
 # load_env.sh
 .env
+
+# AI tool artifacts
+.claude/
+CLAUDE.md
+claude.md
+planning.md
+status.md
+notes.md
+todo.md
+*.chat
+*.conversation
