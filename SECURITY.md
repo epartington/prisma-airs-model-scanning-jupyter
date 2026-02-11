@@ -218,7 +218,7 @@ We provide security updates for:
 
 We recognize security researchers who responsibly disclose vulnerabilities:
 
-- [List of researchers who reported vulnerabilities]
+- *No reports yet*
 
 Thank you for helping keep this project secure!
 

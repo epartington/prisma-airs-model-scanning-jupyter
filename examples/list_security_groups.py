@@ -82,5 +82,5 @@ if __name__ == "__main__":
         print("  2. Set MODEL_SECURITY_CLIENT_SECRET environment variable")
         print("  3. Set TSG_ID environment variable")
         print()
-        print("Run './setup.sh' if you haven't already")
+        print("Run './setup-sdk.sh' if you haven't already")
         exit(1)

@@ -1,8 +1,7 @@
 # Prisma AIRS Model Security - Demo & Examples
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Python 3.10-3.12](https://img.shields.io/badge/python-3.10--3.12-blue.svg)](https://www.python.org/downloads/)
 
 Demonstration repository for scanning machine learning models for security vulnerabilities using Prisma AIRS Model Security.
 
@@ -16,95 +15,59 @@ This repository provides working examples and a comprehensive Jupyter notebook d
 - Analyze scan results and take action
 - Configure security policies for different model sources
 
-## Features
-
-✅ **Interactive Jupyter Notebook** - Complete demo with step-by-step explanations
-✅ **Python Examples** - Ready-to-run scripts for common tasks
-✅ **Production-Ready** - CI/CD integration patterns included
-✅ **Comprehensive Documentation** - Setup guides and troubleshooting
-✅ **Security Best Practices** - Credential management and secure workflows
-
 ## Quick Start
 
-> **⚠️ Important Note About Dependencies**
->
-> The required packages (`model-security-client` and `airs-schemas`) are **proprietary Palo Alto Networks packages** not available on public PyPI. You need Prisma AIRS credentials to access them via a private package repository. See [Installation](#installation) below for automated setup.
+> **Important:** The required packages (`model-security-client` and `airs-schemas`) are **proprietary Palo Alto Networks packages** not available on public PyPI. You need Prisma AIRS credentials to access them via a private package repository.
 
 ### Prerequisites
 
-- Python 3.12 or higher
-- Prisma AIRS Model Security account ([request demo](https://www.paloaltonetworks.com/prisma/prisma-ai-runtime-security#demo))
+- Python 3.10, 3.11, or 3.12 (3.12 recommended)
+- Prisma AIRS Model Security account
 - Service account credentials (Client ID, Client Secret, TSG ID)
 
 ### Installation
 
-**🚀 Automated Setup (Recommended)**
-
-We provide automated scripts to handle authentication and SDK installation:
+**Automated Setup (Recommended)**
 
 ```bash
-# 1. Copy credentials template
+# 1. Clone the repo
+git clone https://github.com/scthornton/prisma-airs-model-scanning-jupyter.git
+cd prisma-airs-model-scanning-jupyter
+
+# 2. Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# 3. Copy credentials template and fill in your values
 cp .env.template .env
+nano .env  # Get credentials from https://strata.paloaltonetworks.com
 
-# 2. Edit .env and add your credentials
-nano .env  # Get credentials from https://stratacloudmanager.paloaltonetworks.com
-
-# 3. Run automated setup
+# 4. Run automated setup (authenticates + installs SDK)
 ./setup-sdk.sh
 ```
 
-That's it! The script handles authentication with Palo Alto's private PyPI and installs all dependencies.
-
-📚 **Need help?** See [QUICK-START.md](QUICK-START.md) or [SETUP-INSTRUCTIONS.md](SETUP-INSTRUCTIONS.md) for detailed guides.
-
----
-
-**📋 Manual Installation**
+**Manual Installation**
 
 If you prefer manual setup:
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd model-scanning
-   ```
+```bash
+# Set credentials as environment variables
+export MODEL_SECURITY_CLIENT_ID="AIRS@your-tsg-id.iam.panserviceaccount.com"
+export MODEL_SECURITY_CLIENT_SECRET="your-client-secret-uuid"
+export TSG_ID="your-tsg-id"
 
-2. **Create virtual environment:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   ```
-
-3. **Set credentials as environment variables:**
-   ```bash
-   export MODEL_SECURITY_CLIENT_ID="AIRS@your-tsg-id.iam.panserviceaccount.com"
-   export MODEL_SECURITY_CLIENT_SECRET="your-client-secret-uuid"
-   export TSG_ID="your-tsg-id"
-   ```
-
-4. **Get PyPI authentication URL:**
-   ```bash
-   ./get-pypi-url.sh  # Returns private PyPI URL
-   ```
-
-5. **Install dependencies:**
-   ```bash
-   pip install model-security-client --extra-index-url $(./get-pypi-url.sh)
-   ```
-
-   Or if you still want to use requirements.txt (will fail without credentials):
-   ```bash
-   pip install -r requirements.txt  # ❌ Will fail - packages not on public PyPI
-   ```
+# Get PyPI URL and install
+pip install model-security-client --extra-index-url $(./get-pypi-url.sh)
+```
 
 ### Getting Your Credentials
 
-1. **Log in to Strata Cloud Manager:** https://stratacloudmanager.paloaltonetworks.com
+1. **Log in to Strata Cloud Manager:** https://strata.paloaltonetworks.com
 2. **Create Service Account:**
    - Navigate to: **Settings → Identity & Access → Service Accounts**
    - Click **Add Service Account**
    - Name: `Prisma AIRS Model Security`
-   - Role: Select appropriate permissions
+   - Role: Select appropriate permissions (minimum: `ai_ms_pypi_auth`, `ai_ms.scans`, `ai_ms.security_groups`)
    - Save and copy the **Client ID** and **Client Secret** (shown once!)
 3. **Get TSG ID:**
    - Navigate to: **Tenant Management**
@@ -113,10 +76,9 @@ If you prefer manual setup:
 ### Run the Jupyter Notebook
 
 ```bash
-# Start Jupyter
 jupyter notebook
 
-# Open: notebooks/model_security_working_demo.ipynb
+# Open: notebooks/prisma-airs-interactive-model-security.ipynb
 # Run all cells or step through individually
 ```
 
@@ -133,42 +95,42 @@ python examples/scan_huggingface_model.py
 ## Repository Structure
 
 ```
-model-scanning/
+prisma-airs-model-scanning-jupyter/
 ├── notebooks/
-│   ├── model_security_working_demo.ipynb  # Main demo notebook
-│   └── README.md                           # Notebook documentation
+│   ├── prisma-airs-interactive-model-security.ipynb  # Interactive demo (widgets)
+│   ├── model_security_demo.ipynb                     # Step-by-step demo
+│   └── README.md                                     # Notebook documentation
 ├── examples/
-│   ├── list_security_groups.py             # List security groups
-│   └── scan_huggingface_model.py           # Scan HuggingFace models
-├── requirements.txt                        # Python dependencies
-├── requirements-minimal.txt                # Minimal dependencies
-├── .gitignore                              # Git ignore patterns
-├── README.md                               # This file
-├── SECURITY.md                             # Security policy
-├── CONTRIBUTING.md                         # Contribution guidelines
-├── CODE_OF_CONDUCT.md                      # Code of conduct
-└── LICENSE                                 # MIT License
+│   ├── list_security_groups.py                       # List security groups
+│   └── scan_huggingface_model.py                     # Scan HuggingFace models
+├── .env.template                                     # Credential template
+├── get-pypi-url.sh                                   # PyPI authentication script
+├── setup-sdk.sh                                      # Automated SDK installer
+├── requirements.txt                                  # Python dependencies
+├── QUICK-START.md                                    # Quick start guide
+├── SDK-TLDR.md                                       # SDK installation FAQ
+├── OVERVIEW.md                                       # Product overview
+├── SECURITY.md                                       # Security policy
+├── CONTRIBUTING.md                                   # Contribution guidelines
+├── CODE_OF_CONDUCT.md                                # Code of conduct
+├── LICENSE                                           # MIT License
+└── ai-model-security.pdf                             # Official PANW documentation
 ```
 
 ## What Gets Scanned?
 
 Prisma AIRS Model Security detects:
 
-### 🔴 Critical Threats
+**Critical Threats**
 - **Malicious Code Execution** - Pickle deserialization attacks, arbitrary code execution
 - **Supply Chain Attacks** - Compromised dependencies, poisoned models
 - **Neural Backdoors** - Hidden triggers that cause misclassification
 - **Data Exfiltration** - Models designed to leak training data
 
-### 🟡 Policy Violations
+**Policy Violations**
 - **Unapproved Licenses** - GPL, AGPL, or custom licenses violating policy
 - **Unsafe Formats** - Pickle, Keras (H5) files that allow code execution
 - **Unverified Publishers** - Models from untrusted organizations
-
-### 🟢 Best Practices
-- **Recommended Formats** - SafeTensors, ONNX, TensorFlow SavedModel
-- **Approved Sources** - Verified organizations and publishers
-- **Security Metadata** - Model cards, license files, provenance
 
 ## Usage Examples
 
@@ -190,50 +152,10 @@ result = client.scan(
 )
 
 # Check result
-if result.eval_outcome == "ALLOWED":
-    print("✅ Model is safe to deploy")
+if str(result.eval_outcome) == "EvalOutcome.ALLOWED":
+    print("Model is safe to deploy")
 else:
-    print(f"❌ Model blocked: {result.eval_summary.rules_failed} rules failed")
-```
-
-### CI/CD Integration
-
-```python
-def validate_model_before_deployment(model_uri, security_group_uuid):
-    """
-    Gate deployment based on security scan results.
-    Returns True if safe to deploy, False otherwise.
-    """
-    result = client.scan(
-        security_group_uuid=security_group_uuid,
-        model_uri=model_uri
-    )
-
-    is_safe = result.eval_outcome == "ALLOWED"
-
-    if not is_safe:
-        print(f"DEPLOYMENT BLOCKED: {result.eval_summary.rules_failed} security violations")
-        # Fail the CI/CD pipeline
-        sys.exit(1)
-
-    return is_safe
-```
-
-### Batch Scanning
-
-```python
-models_to_scan = [
-    "https://huggingface.co/openai-community/gpt2",
-    "https://huggingface.co/google-bert/bert-base-uncased",
-    "https://huggingface.co/microsoft/DialoGPT-medium"
-]
-
-for model_uri in models_to_scan:
-    result = client.scan(
-        security_group_uuid=security_group_uuid,
-        model_uri=model_uri
-    )
-    print(f"{model_uri}: {result.eval_outcome}")
+    print(f"Model blocked: {result.eval_summary.rules_failed} rules failed")
 ```
 
 ## Viewing Detailed Results
@@ -243,15 +165,11 @@ The SDK returns summary data. For detailed findings:
 1. Go to: https://strata.paloaltonetworks.com
 2. Navigate to: **Insights → Prisma AIRS → Model Security → Scans**
 3. Click on your Scan ID
-4. View:
-   - Specific rule failures
-   - Threat descriptions
-   - Remediation steps
-   - File-level findings
+4. View specific rule failures, threat descriptions, remediation steps, and file-level findings
 
 ## Security
 
-**⚠️ Important:** Never commit credentials to version control.
+**Never commit credentials to version control.**
 
 - Use environment variables for credentials
 - Add `.env` files to `.gitignore`
@@ -263,35 +181,18 @@ The SDK returns summary data. For detailed findings:
 
 ### ValidationError: Model URI format
 
-**Error:**
-```
-ValidationError: Model URI 'https://huggingface.co/gpt2' does not follow expected format
-```
-
-**Fix:** HuggingFace URLs must include author/organization:
+HuggingFace URLs must include the author/organization:
 ```python
-# ❌ Wrong
+# Wrong
 model_uri = "https://huggingface.co/gpt2"
 
-# ✅ Correct
+# Correct
 model_uri = "https://huggingface.co/openai-community/gpt2"
 ```
 
-### Authentication Errors
+### Module Not Found / Package Installation Errors
 
-**Error:** `401 Unauthorized` or `403 Forbidden`
-
-**Fix:**
-1. Verify credentials are set correctly
-2. Check TSG_ID matches your tenant
-3. Confirm service account has required permissions
-4. Ensure credentials haven't expired
-
-### Module Not Found
-
-**Error:** `ModuleNotFoundError: No module named 'model_security_client'`
-
-**Fix:**
+The SDK is proprietary and hosted on Palo Alto's private PyPI, not public PyPI:
 ```bash
 # Ensure virtual environment is activated
 source .venv/bin/activate
@@ -303,20 +204,7 @@ source .venv/bin/activate
 pip install model-security-client --extra-index-url $(./get-pypi-url.sh)
 ```
 
-### Package Installation Errors
-
-**Error:** `ERROR: Could not find a version that satisfies the requirement model-security-client`
-
-**Cause:** These packages are proprietary and hosted on Palo Alto's private PyPI, not public PyPI.
-
-**Fix:**
-1. Ensure credentials are set in `.env` or as environment variables
-2. Run `./setup-sdk.sh` for automated setup
-3. See [SETUP-INSTRUCTIONS.md](SETUP-INSTRUCTIONS.md) for detailed troubleshooting
-
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [SDK-TLDR.md](SDK-TLDR.md) for detailed troubleshooting.
 
 ## License
 
@@ -324,16 +212,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For questions, issues, or feature requests:
-
-- **Documentation:** https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/prisma-cloud-airs
-- **GitHub Issues:** [Create an issue](<repository-url>/issues)
-- **Community:** Join the Prisma Cloud community forums
-
-## Acknowledgments
-
-- Built with [Prisma AIRS Model Security SDK](https://pypi.org/project/model-security-client/)
-- Powered by [Palo Alto Networks Prisma AI Runtime Security](https://www.paloaltonetworks.com/prisma/prisma-ai-runtime-security)
+- **Documentation:** https://docs.paloaltonetworks.com/ai-runtime-security/ai-model-security
+- **GitHub Issues:** [Create an issue](https://github.com/scthornton/prisma-airs-model-scanning-jupyter/issues)
 
 ---
 

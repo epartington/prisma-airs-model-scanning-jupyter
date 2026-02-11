@@ -55,7 +55,6 @@ secrets.json
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Logs
 *.log
@@ -76,17 +75,10 @@ htmlcov/
 scan_results_*.json
 scan_results_export.*
 *.csv
-scan_banana_backdoor.py
 
 # OS
 .DS_Store
 Thumbs.db
-
-# Shell scripts with credentials (if any)
-# Uncomment if you create credential-loading scripts:
-# *_credentials.sh
-# load_env.sh
-.env
 
 # AI tool artifacts
 .claude/

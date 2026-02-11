@@ -63,11 +63,11 @@ Enhancement suggestions are welcome! Please:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR-USERNAME/model-scanning.git
-cd model-scanning
+git clone https://github.com/YOUR-USERNAME/prisma-airs-model-scanning-jupyter.git
+cd prisma-airs-model-scanning-jupyter
 
 # Add upstream remote
-git remote add upstream https://github.com/scthornton/model-scanning.git
+git remote add upstream https://github.com/scthornton/prisma-airs-model-scanning-jupyter.git
 
 # Create virtual environment
 python3 -m venv .venv
@@ -235,9 +235,9 @@ Look for issues labeled `good-first-issue` or `documentation`.
 ## Project Structure
 
 ```
-model-scanning/
+prisma-airs-model-scanning-jupyter/
 ├── notebooks/           # Jupyter notebook demos
-│   ├── model_security_working_demo.ipynb
+│   ├── model_security_demo.ipynb
 │   └── README.md
 ├── examples/            # Python example scripts
 │   ├── list_security_groups.py

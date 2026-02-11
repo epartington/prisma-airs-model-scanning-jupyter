@@ -418,7 +418,7 @@ ignore_patterns=["*.md", "*.txt", "*.png"]
 ## Learn More
 
 - **Documentation:** https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin/prisma-cloud-airs
-- **SDK:** https://pypi.org/project/model-security-client/
+- **SDK:** Installed via private PyPI (see [SDK-TLDR.md](SDK-TLDR.md))
 - **Strata Cloud Manager:** https://strata.paloaltonetworks.com
 - **Threat Intelligence:** https://insightsdb.paloaltonetworks.com
 

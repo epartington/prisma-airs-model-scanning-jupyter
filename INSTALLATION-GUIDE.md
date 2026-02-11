@@ -1,152 +1,128 @@
-# Prisma AIRS Installation Guide
+# Prisma AIRS Model Security - Installation Guide
 
-## Current Issue
+## Prerequisites
 
-The `requirements.txt` file includes proprietary packages that aren't available on public PyPI:
+- **Python 3.10 - 3.12** (3.12 recommended; 3.13 has compatibility issues)
+- **pip** (included with Python)
+- **jq** (installed automatically by setup script, or `brew install jq` / `apt install jq`)
+- **Prisma AIRS credentials** from Strata Cloud Manager
 
-- `airs-schemas==0.1.1` - Proprietary Palo Alto Networks package
-- `model-security-client==0.1.1` - Prisma AIRS SDK (proprietary)
+## Step 1: Clone the Repository
 
-## Your Options
-
-### Option 1: Get Prisma AIRS Access (Full Functionality)
-
-**If you need the actual Prisma AIRS SDK:**
-
-1. **Request access** from Palo Alto Networks:
-   - Visit: https://www.paloaltonetworks.com/prisma/prisma-ai-runtime-security#demo
-   - Request a demo account
-   - OR login to existing account: https://stratacloudmanager.paloaltonetworks.com
-
-2. **Receive SDK installation instructions** - They will provide:
-   - Private PyPI repository URL, or
-   - Wheel files (.whl) to install directly, or
-   - Alternative installation method
-
-3. **Configure credentials:**
-   ```bash
-   export MODEL_SECURITY_CLIENT_ID="AIRS@your-tsg-id.iam.panserviceaccount.com"
-   export MODEL_SECURITY_CLIENT_SECRET="your-client-secret-uuid"
-   export TSG_ID="your-tsg-id"
-   ```
-
-### Option 2: Work Without Prisma AIRS SDK (Current Setup)
-
-**What's installed:**
-- ✅ Jupyter Notebook environment
-- ✅ Data analysis libraries (pandas, numpy, matplotlib, seaborn)
-- ✅ IPython kernel for running notebooks
-
-**What's NOT available:**
-- ❌ Prisma AIRS SDK (`model-security-client`)
-- ❌ Prisma AIRS schemas (`airs-schemas`)
-
-**What you CAN do:**
-- View and explore the notebook structure
-- Modify the notebook to use open-source alternatives
-- Learn about the Prisma AIRS API structure
-- Create mock implementations for testing
-
-**What you CANNOT do:**
-- Actually scan models using Prisma AIRS
-- Connect to Palo Alto Networks services
-- Run the demo as-is without modifications
-
-### Option 3: Use Open Source Model Scanning
-
-**Python Version Compatibility Issue:**
-You're running Python 3.13.5, but `modelscan` (the open-source alternative) requires Python < 3.13.
-
-**Solutions:**
-
-**A. Create Python 3.12 environment:**
 ```bash
-# Install Python 3.12 via pyenv or your package manager
-# Then create a virtual environment
-python3.12 -m venv .venv-py312
-source .venv-py312/bin/activate
-pip install modelscan modelscan-pai jupyter notebook pandas matplotlib seaborn
+git clone https://github.com/scthornton/prisma-airs-model-scanning-jupyter.git
+cd prisma-airs-model-scanning-jupyter
 ```
 
-**B. Use Docker:**
+## Step 2: Create a Virtual Environment
+
 ```bash
-# Create Dockerfile with Python 3.12
-docker run -it --rm -v $(pwd):/work -w /work python:3.12 bash
-pip install modelscan jupyter notebook
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-## Current Installation Status
+## Step 3: Install Base Dependencies
 
-✅ **Installed successfully:**
-```
-jupyter==1.1.1
-notebook==7.4.7
-ipykernel==7.0.1
-pandas (latest)
-matplotlib (latest)
-seaborn==0.13.2
-numpy (latest)
+```bash
+pip install -r requirements.txt
 ```
 
-## Quick Start (Current Setup)
+This installs the Jupyter environment and data visualization libraries. The proprietary SDK is installed separately in the next step.
 
-**Launch Jupyter Notebook:**
+## Step 4: Configure Credentials
+
+```bash
+cp .env.template .env
+```
+
+Edit `.env` with your credentials from [Strata Cloud Manager](https://strata.paloaltonetworks.com):
+
+| Variable | Where to Find It | Format |
+|----------|-------------------|--------|
+| `MODEL_SECURITY_CLIENT_ID` | Settings > Identity & Access > Service Accounts | `AIRS@your-tsg-id.iam.panserviceaccount.com` |
+| `MODEL_SECURITY_CLIENT_SECRET` | Shown once when creating the service account | UUID |
+| `TSG_ID` | Settings > Tenant Management | Numeric ID |
+
+## Step 5: Install the SDK
+
+```bash
+./setup-sdk.sh
+```
+
+This script authenticates with your credentials, retrieves a time-limited private PyPI URL, and installs `model-security-client` and its dependency `airs-schemas`.
+
+**Why a separate step?** These packages live on a private PyPI server that requires OAuth2 authentication. Standard `pip install` cannot access them without the authenticated URL.
+
+## Step 6: Verify the Installation
+
+```bash
+python -c "from model_security_client.api import ModelSecurityAPIClient; print('SDK imported successfully')"
+```
+
+## Step 7: Launch Jupyter
+
 ```bash
 jupyter notebook
 ```
 
-**Open the demo notebook:**
-```
-notebooks/prisma-airs-interactive-model-security.ipynb
-```
+Open either notebook:
+- `notebooks/prisma-airs-interactive-model-security.ipynb` — Widget-based interactive scanner
+- `notebooks/model_security_demo.ipynb` — Step-by-step walkthrough
 
-**Note:** Cells that use `model-security-client` will fail until you:
-1. Get Prisma AIRS access, OR
-2. Modify the notebook to use open-source alternatives, OR
-3. Comment out those cells and use it as reference documentation
+## Troubleshooting
 
-## Alternative: Open Source Model Scanning
+### `pip install` fails for `model-security-client`
 
-If you want to scan models without Prisma AIRS, use `modelscan`:
+This is expected. The SDK is not on public PyPI. Use `./setup-sdk.sh` instead, which authenticates and installs from the private repository.
 
-```python
-from modelscan.modelscan import ModelScan
+### `get-pypi-url.sh` returns empty or errors
 
-# Scan a HuggingFace model
-ms = ModelScan()
-results = ms.scan("path/to/model.pkl")
-
-if results["issues"]:
-    print(f"Found {len(results['issues'])} security issues")
-else:
-    print("Model is clean")
+Verify your credentials are correct:
+```bash
+set -a && source .env && set +a
+echo $MODEL_SECURITY_CLIENT_ID
+echo $TSG_ID
 ```
 
-**Note:** Requires Python 3.10-3.12, not 3.13
+Ensure the service account has the correct permissions in Strata Cloud Manager.
 
-## Recommendations
+### Python version errors
 
-**For Learning/Demo Purposes:**
-- Current setup is fine
-- View the notebook structure
-- Read the documentation
-- Understand the API patterns
+Check your version: `python3 --version`. The SDK requires Python 3.10-3.12. If you have 3.13+, install 3.12 via `pyenv` or your package manager:
 
-**For Production Use:**
-- Get Prisma AIRS access from Palo Alto Networks
-- Follow their installation instructions
-- Configure credentials properly
-- Use Python 3.12 (the version specified in README)
+```bash
+# macOS with pyenv
+pyenv install 3.12
+pyenv local 3.12
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### `jq` not found
+
+The setup script tries to install `jq` automatically. If it fails:
+- macOS: `brew install jq`
+- Ubuntu/Debian: `sudo apt install jq`
+- RHEL/Fedora: `sudo dnf install jq`
+
+### HuggingFace URL validation errors
+
+Model URLs must include the organization or author:
+- Wrong: `https://huggingface.co/gpt2`
+- Correct: `https://huggingface.co/openai-community/gpt2`
+
+## What Gets Installed
+
+| Package | Source | Purpose |
+|---------|--------|---------|
+| `model-security-client` | Private PyPI | Prisma AIRS Python SDK |
+| `airs-schemas` | Private PyPI | SDK data models (auto-installed as dependency) |
+| `jupyter`, `notebook` | Public PyPI | Jupyter environment |
+| `ipywidgets` | Public PyPI | Interactive notebook widgets |
+| `pandas`, `matplotlib`, `seaborn` | Public PyPI | Data analysis and visualization |
 
 ## Next Steps
 
-1. **Decide which path:** Prisma AIRS access vs. open-source alternatives
-2. **Launch Jupyter:** `jupyter notebook` (already works with current setup)
-3. **Explore notebooks:** View structure even without SDK
-4. **Request access:** If you need Prisma AIRS functionality
-
-## Support
-
-- **Prisma AIRS Documentation:** https://docs.paloaltonetworks.com/prisma/prisma-cloud
-- **Request Demo:** https://www.paloaltonetworks.com/prisma/prisma-ai-runtime-security#demo
-- **Open Source Alternative:** https://github.com/protectai/modelscan
+- [QUICK-START.md](QUICK-START.md) — 3-step quick start
+- [SDK-TLDR.md](SDK-TLDR.md) — Why `pip install` fails and how the private PyPI works
+- [OVERVIEW.md](OVERVIEW.md) — Technical overview of Prisma AIRS Model Security

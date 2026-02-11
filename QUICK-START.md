@@ -22,7 +22,7 @@ jupyter notebook
 
 ## Your Credentials Checklist
 
-Get these from: **https://stratacloudmanager.paloaltonetworks.com**
+Get these from: **https://strata.paloaltonetworks.com**
 
 - [ ] `MODEL_SECURITY_CLIENT_ID` (from Settings → Identity & Access → Service Accounts)
 - [ ] `MODEL_SECURITY_CLIENT_SECRET` (shown only once at creation)
@@ -55,13 +55,13 @@ client = ModelSecurityAPIClient(
 
 # List security groups
 groups = client.list_security_groups()
-print(f"✅ Found {len(groups)} security groups")
+print(f"✅ Found {len(groups.security_groups)} security groups")
 ```
 
 ---
 
 ## Need Help?
 
-- 📖 Detailed instructions: `SETUP-INSTRUCTIONS.md`
-- 📄 Full guide: `INSTALLATION-GUIDE.md`
-- 📕 Official docs: `ai-model-security.pdf`
+- 📖 SDK FAQ: `SDK-TLDR.md`
+- 📄 Full guide: [INSTALLATION-GUIDE.md](INSTALLATION-GUIDE.md)
+- 🌐 Product overview: [OVERVIEW.md](OVERVIEW.md)

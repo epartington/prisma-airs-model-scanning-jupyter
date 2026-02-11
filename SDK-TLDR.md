@@ -42,7 +42,7 @@ pip install model-security-client --extra-index-url $(./get-pypi-url.sh)
 
 ## Where Do I Get Credentials?
 
-**Login:** https://stratacloudmanager.paloaltonetworks.com
+**Login:** https://strata.paloaltonetworks.com
 
 1. Settings → Identity & Access → Service Accounts (get Client ID/Secret)
 2. Tenant Management (get TSG ID)
@@ -56,4 +56,4 @@ pip install model-security-client --extra-index-url $(./get-pypi-url.sh)
 
 ## Still Confused?
 
-See [SETUP-INSTRUCTIONS.md](SETUP-INSTRUCTIONS.md) for the complete guide.
+See [QUICK-START.md](QUICK-START.md) for the complete guide.
